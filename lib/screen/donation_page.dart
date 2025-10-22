@@ -1,0 +1,115 @@
+import 'package:flutter/material.dart';
+
+
+/*
+class DonationoldPage extends StatefulWidget {
+  const DonationPage({super.key});
+
+  @override
+  _DonationPageState createState() => _DonationPageState();
+}
+
+class _DonationPageState extends State<DonationPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  String selectedPurpose = 'General Fund';
+
+  final List<String> purposes = [
+    'General Fund',
+    'Puja Sponsorship',
+    'Charity & Community Service',
+    'Temple Renovation',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Temple Donation'),
+        backgroundColor: Colors.deepOrange,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Image.asset(
+              'assets/icon/icon.png', // Replace with your actual image path
+              height: 45,
+              width: 45,
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Donation Amount (₹)',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter an amount' : null,
+              ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: selectedPurpose,
+                items: purposes.map((purpose) {
+                  return DropdownMenuItem(value: purpose, child: Text(purpose));
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedPurpose = value!;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: 'Purpose',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Your Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email (optional)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton.icon(
+                icon: Icon(Icons.volunteer_activism),
+                label: Text('Donate Now'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    // TODO: Integrate payment gateway here
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Processing donation...')),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+*/

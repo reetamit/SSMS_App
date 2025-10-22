@@ -1,0 +1,94 @@
+Create a flutter page 'donation_page.dart' where once user choose Type of donation it would display only list of option under that type.
+User can select one type and option and there will be button 'Add to Cart'
+Finally all list of choice would display as list and end of list there will be a total amount which is sub of donation amounts in the list
+ and finally will be 'Donate' at the buttom which will navigate to payment page with total amount.
+ Below are sample data.
+ 
+Type: Bhojan with Baba 2025
+    Silver Sponsorship - $251.00 USD
+    Gold Sponsorship - $501.00 USD
+    Diamond Sponsorship - $1,001.00
+
+Type : Puja Sponsorships
+Archana - Any Deity: $15.00
+Abhishekam - Any Deity: $25.00
+Flowers Sponsor: $116.00
+Annadanm/Prasadam Sponsor: $116.00
+Sai Satya Vratam:
+
+Type: Abhishekam Sponsorships
+SaiBaba-1 Year-Twice a week: $1,501.00
+Ganesh-1 Year-Once a week: $501.00
+Datta & Anaga-1 Year-Once a week: $501.00
+Shiva-1 Year-Once a week: $751.00
+Karthekeya-1 Year-Once a Month: $251.00
+Ayyappa-1 Year-Once a Month: $351.00
+Sai Mula Virat-1 Year-4 times a Year: $1,001.00
+All Deity Abhishekam-1 Year: $2,501.00
+
+Type: Vastram / Shawl Sponsorships
+Baba Shawl - 1 Time: $151.00
+All Deity Vastram - 1 Time: $301.00
+Karthekeya Vastram - 1 Time: : $251.00
+Ganesh Vastram - 1 Time: $151.00
+Dattatreya Vastram - 1 Time: $151.00
+
+
+Type: Kalyanam Sponsorships
+Sri Sita Rama Kalyanam: $151.00
+Sri Shiva Parvathi Kalyanam: $151.00
+Shiva Parvathi Kalyanam: $151.00
+All 4 Kalyanams - 1 Year: $501.00
+Vastram for 1 Kalyanam: $501.00
+Talambralu for 1 Kalyanam: $51.00
+Mangala sutram Package:
+
+Type: Havan Sponsorships
+Sai Mulavirat Havan: $151.00
+Ganesh Havan $151.00
+Dattatreya Havan: $151.00
+chandi Havan: $151.00
+All 5 Havans in 1 Year:
+
+Type: Sai Care Sponsorship
+Monthly: $116.00 USD
+Annual: $501.00 USD
+Weekly: $58.00 USD
+
+Type: Dollar-A-Day Sponsorship
+One Dollar: $30.00 USD - month(s)
+Two Dollar: $60.00 USD - month(s)
+Three Dollar: $90.00 USD -months(s)
+
+
+Type: SSMNC Parking Expansion Sponsorship
+Diamond Sponsor: $10,000.00 USD
+Platinum Sponsor: $5,000.00 USD
+Gold Sponsor: $1,000.00 USD
+Silver Sponsor: $500.00 USD
+Other - for Parking: $101.00
+
+Type: Other Sponsorships
+Sai Satya Vratam-1 Time: $25.00
+Sai Satya Vratam-1 Year: $251.00
+Anagastami Vratham-1 Time: $25.00
+Anagastami Vratham-1 Year: $251.00
+Sai / Datta Paduka Puja: $51.00
+Vahan / Car Puja: $51.00
+Prasadam Distrib. Supplies-1 Day: $25.00
+Prasadam Distrib. Supplies-1 Week: $150.00
+Prasadam Distrib. Supplies-1 Month: $501.00
+Other/General: $11.00 USD
+
+
+
+
+
+
+
+
+
+
+
+
+

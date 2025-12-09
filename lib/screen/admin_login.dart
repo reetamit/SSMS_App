@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:temple_app/screen/admin_dashboard.dart';
+import 'package:temple_app/screen/admin_approval_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     if (id == 'admin' && password == 'admin') {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DashBoardAdminPage()),
+        MaterialPageRoute(builder: (context) => const ApprovalAdminPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -20,12 +20,74 @@ class _VolunteerRegistrationPageState extends State<VolunteerRegistrationPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
 
   DateTime? selectedDate;
   TimeOfDay? startTime;
   TimeOfDay? endTime;
   double totalHours = 0;
+  String? selectedDesc;
+
+  @override
+  void initState() {
+    super.initState();
+    //Load categories when screen initializes
+    listCategory();
+  }
+
+  // Assume you already have a list of descriptions
+  List<dynamic> listOfCategories = [];
+
+  Future<void> listCategory() async {
+    final snapshot = await DatabaseService().read(
+      path: Words.adminsettingsPath,
+    );
+    if (snapshot != null) {
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+
+      if (data != null && data[Words.adminsettingsVcategories] is List) {
+        setState(() {
+          listOfCategories = List.from(
+            data[Words.adminsettingsVcategories] as List,
+          );
+        });
+      }
+    }
+  }
+
+  Future<double> getVolunteerHourLimit() async {
+    final snapshot = await DatabaseService().read(
+      path: Words.adminsettingsPath,
+    );
+
+    double volunteerHourLimit = 0.0;
+
+    if (snapshot != null) {
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+
+      if (data != null && data[Words.adminsettingsVhourlimit] != null) {
+        volunteerHourLimit = data[Words.adminsettingsVhourlimit];
+      }
+    }
+    return volunteerHourLimit;
+  }
+
+  Future<double> _totalVolunteerHour(String emailparam, String phparam) async {
+    final records = await DatabaseService().getVolunteerRecordbyEmailPh(
+      path: Words.vHourPath,
+      email: emailparam,
+      phone: phparam,
+    );
+
+    double totalHoursSum = 0.0;
+
+    for (var record in records) {
+      if (record.containsKey(Words.vhourtotalhours)) {
+        final num hours = record[Words.vhourtotalhours] ?? 0;
+        totalHoursSum += hours.toDouble();
+      }
+    }
+    return totalHoursSum;
+  }
 
   // send mail to the user using smtp
   sendMailFromGmail(String sender, sub, text) async {
@@ -116,11 +178,31 @@ class _VolunteerRegistrationPageState extends State<VolunteerRegistrationPage> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      //First Name: SaiBaba
-      //Last Name: Temple
-      //Email: sssmnc@outlook.com
+      final limit = await getVolunteerHourLimit();
+      final alreadyDoneHours = await _totalVolunteerHour(
+        emailController.text,
+        phoneController.text,
+      );
 
-      //Save into table
+      // Check limit before saving
+      if (alreadyDoneHours > limit) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text("Volunteer Hour Limit"),
+            content: const Text("Your Volunteer Hour limit is reached!"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+        return; // Stop submission
+      }
+
+      // Save into table
       Map<String, dynamic> vHourData = {
         Words.vhourname: nameController.text,
         Words.vhouremail: emailController.text,
@@ -130,23 +212,21 @@ class _VolunteerRegistrationPageState extends State<VolunteerRegistrationPage> {
         Words.vhourstarttime: timeOfDayToString(startTime!),
         Words.vhourendtime: timeOfDayToString(endTime!),
         Words.vhourtotalhours: totalHours,
-        Words.vhourdesc: descriptionController.text,
+        Words.vhourdesc: selectedDesc ?? '',
         Words.vhourapproved: 'Pending',
         Words.vhourapprovedBy: '',
-        // selectedDate?.toIso8601String() ?? DateTime.now().toIso8601String(),
       };
 
       try {
         await DatabaseService().create(path: Words.vHourPath, data: vHourData);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
-              'Your volunteer hours has been submitted for approval!',
+              'Your volunteer hours have been submitted for approval!',
             ),
           ),
         );
       } catch (e) {
-        // Handle error, e.g., show a snackbar
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error creating event: $e')));
@@ -160,7 +240,6 @@ class _VolunteerRegistrationPageState extends State<VolunteerRegistrationPage> {
     nameController.clear();
     emailController.clear();
     phoneController.clear();
-    descriptionController.clear();
     setState(() {
       selectedDate = null;
       startTime = null;
@@ -312,14 +391,25 @@ class _VolunteerRegistrationPageState extends State<VolunteerRegistrationPage> {
               ),
               SizedBox(height: 16),
 
-              // Description
-              TextFormField(
-                controller: descriptionController,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: 'Description',
+              DropdownButtonFormField<String>(
+                initialValue: selectedDesc,
+                decoration: const InputDecoration(
+                  labelText: 'Category',
                   border: OutlineInputBorder(),
                 ),
+                items: listOfCategories.map((desc) {
+                  return DropdownMenuItem<String>(
+                    value: desc.toString(),
+                    child: Text(desc.toString()),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedDesc = value;
+                  });
+                },
+                validator: (value) =>
+                    value == null ? 'Please select a category' : null,
               ),
               SizedBox(height: 24),
 
@@ -348,7 +438,7 @@ class _VolunteerRegistrationPageState extends State<VolunteerRegistrationPage> {
                         'Start Time: ${startTime != null ? startTime!.format(context) : 'Not selected'}\n'
                         'End Time: ${endTime != null ? endTime!.format(context) : 'Not selected'}\n'
                         'Total Hours: ${totalHours.toStringAsFixed(2)}\n'
-                        'Description: ${descriptionController.text}\n\n'
+                        'Description: $selectedDesc\n\n'
                         'Best regards,\n'
                         'Sai Baba Temple App',
                   );

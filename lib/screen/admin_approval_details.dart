@@ -21,7 +21,7 @@ class _AdminApprovalDetailScreenState extends State<AdminApprovalDetailScreen> {
   void initState() {
     super.initState();
     _approvedByController = TextEditingController(
-      text: widget.request.approvedBy ?? '',
+      text: widget.request.approvedBy,
     );
   }
 
@@ -61,7 +61,9 @@ class _AdminApprovalDetailScreenState extends State<AdminApprovalDetailScreen> {
     Navigator.pop(context, true); // return true to dashboard
   }
 
-  void _onReject() async {
+  void _onReject(String rejection_reason) async {
+    print(rejection_reason);
+
     final approver = _approvedByController.text.trim();
     if (approver.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -72,7 +74,11 @@ class _AdminApprovalDetailScreenState extends State<AdminApprovalDetailScreen> {
     // Update Firebase with approved = false and approvedBy = approver
     await DatabaseService().update(
       path: "${Words.vHourPath}/${widget.request.key}",
-      data: {Words.vhourapproved: 'Rejected', Words.vhourapprovedBy: approver},
+      data: {
+        Words.vhourapproved: 'Rejected',
+        Words.vhourapprovedBy: approver,
+        Words.vhourrejectionreason: rejection_reason,
+      },
     );
     ScaffoldMessenger.of(
       context,
@@ -126,7 +132,7 @@ class _AdminApprovalDetailScreenState extends State<AdminApprovalDetailScreen> {
               readOnly:
                   (req.approved == 'Approved' || req.approved == 'Rejected'),
               decoration: const InputDecoration(
-                labelText: "Approved by",
+                labelText: "Approved/Rejected by",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -146,7 +152,53 @@ class _AdminApprovalDetailScreenState extends State<AdminApprovalDetailScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: req.approved == 'Rejected' ? null : _onReject,
+                    onPressed: req.approved == 'Rejected'
+                        ? null
+                        : () async {
+                            final TextEditingController reasonController =
+                                TextEditingController();
+
+                            final result = await showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                    "Please provide Rejection reason",
+                                  ),
+                                  content: TextField(
+                                    controller: reasonController,
+                                    maxLines: 3,
+                                    decoration: const InputDecoration(
+                                      hintText: "Enter reason here...",
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(
+                                          context,
+                                        ).pop(); // close without result
+                                      },
+                                      child: const Text("Cancel"),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(
+                                          context,
+                                        ).pop(reasonController.text);
+                                      },
+                                      child: const Text("OK"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (result != null && result.isNotEmpty) {
+                              _onReject(result);
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),

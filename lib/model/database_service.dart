@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:temple_app/localization/words.dart';
 
 class DatabaseService {
   final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
@@ -39,5 +40,41 @@ class DatabaseService {
   Future<void> delete({required String path}) async {
     final DatabaseReference ref = _firebaseDatabase.ref().child(path);
     await ref.remove();
+  }
+
+  Future<List<Map<String, dynamic>>> getVolunteerRecordbyEmailPh({
+    required String path,
+    required String email,
+    required String phone,
+  }) async {
+    try {
+      // Use your existing read function
+      final snapshot = await DatabaseService().read(path: path);
+
+      List<Map<String, dynamic>> matchedData = [];
+
+      if (snapshot != null && snapshot.value != null) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+
+        for (var entry in data.entries) {
+          if (entry.value is Map<dynamic, dynamic>) {
+            final record = Map<String, dynamic>.from(entry.value);
+
+            // Match all three fields
+            final bool emailMatch = record[Words.vhouremail] == email;
+            final bool phoneMatch = record[Words.vhourphone] == phone;
+
+            if (emailMatch && phoneMatch) {
+              matchedData.add(record);
+            }
+          }
+        }
+      }
+
+      return matchedData; // ✅ return all matches
+    } catch (e) {
+      print("Error retrieving data: $e");
+      return [];
+    }
   }
 }
